@@ -317,6 +317,67 @@ LINK_PATTERNS = [
 ]
 
 
+def detect_legitimate_service_link(text_lower):
+    """
+    Detect a narrow class of legitimate service/consultation links.
+
+    This is designed for messages that:
+    - ask the user to open a link,
+    - ask for camera/video access,
+    - contain a reference number,
+    - and do not contain strong scam signals such as
+      payment requests, credential requests, threats, or urgency.
+
+    The detector does not whitelist a specific company or domain.
+    """
+
+    camera_access = any(
+        phrase in text_lower
+        for phrase in [
+            "allow access to your camera",
+            "allow camera access",
+            "camera access",
+            "allow access to camera",
+            "access to your camera",
+        ]
+    )
+
+    reference_number = any(
+        phrase in text_lower
+        for phrase in [
+            "your reference",
+            "reference:",
+            "reference number",
+            "appointment id",
+            "consultation id",
+            "patient id",
+        ]
+    )
+
+    service_access_language = any(
+        phrase in text_lower
+        for phrase in [
+            "open the following link",
+            "open the link",
+            "join the consultation",
+            "join consultation",
+            "video consultation",
+            "online consultation",
+        ]
+    )
+
+    has_url = bool(
+        re.search(r"(https?://\S+|www\.\S+)", text_lower)
+    )
+
+    return (
+        camera_access
+        and reference_number
+        and service_access_language
+        and has_url
+    )
+
+
 def detect_legitimate_transaction(text_lower):
     """
     Detect common legitimate bank transaction alerts.
@@ -397,6 +458,12 @@ def analyze_message(text):
     # -----------------------------------------
 
     legitimate_transaction = detect_legitimate_transaction(
+        text_lower
+    )
+
+    # Detect legitimate-looking service/consultation access links.
+    # This is intentionally context-based rather than domain-based.
+    legitimate_service_link = detect_legitimate_service_link(
         text_lower
     )
 
@@ -496,12 +563,18 @@ def analyze_message(text):
         for phrase in LINK_PATTERNS
     )
 
-    if actual_urls or link_language:
+    if (actual_urls or link_language) and not legitimate_service_link:
 
         score += 30
 
         indicators.append(
             "Contains or encourages the user to follow a link"
+        )
+
+    elif legitimate_service_link:
+
+        indicators.append(
+            "Looks like a service or consultation access link rather than a payment or credential request"
         )
 
     # -----------------------------------------
@@ -592,10 +665,28 @@ def analyze_message(text):
         "unsaved number",
     ]
 
-    if any(
-        term in text_lower
+    # Do not treat a standard anti-spam disclaimer such as
+    # "If you did not expect this message from an unknown sender..."
+    # as evidence that the sender is actually unknown.
+    unknown_sender_disclaimer = any(
+        phrase in text_lower
+        for phrase in [
+            "if you did not expect this message from an unknown sender",
+            "if you did not expect this message, it may be spam",
+            "if you did not expect this message",
+        ]
+    )
+
+    unknown_sender_matches = [
+        term
         for term in unknown_sender_terms
-    ):
+        if term in text_lower
+    ]
+
+    if unknown_sender_disclaimer:
+        unknown_sender_matches = []
+
+    if unknown_sender_matches:
 
         score += 15
 
@@ -654,8 +745,8 @@ def analyze_message(text):
         # Remove residual generic transaction risk.
         score = max(0, score - 20)
 
-        # If there are no strong scam indicators,
-        # keep the transaction alert at zero.
+        # Keep a legitimate transaction at zero only when there
+        # are no actual strong scam indicators.
         strong_scam_indicators = (
             urgency_matches
             or threat_matches
@@ -663,10 +754,26 @@ def analyze_message(text):
             or link_language
             or sensitive_found
             or money_found
-            or unknown_sender_terms
+            or unknown_sender_matches
         )
 
         if not strong_scam_indicators:
+            score = 0
+
+    # A service/consultation invitation can contain a real URL and
+    # camera-access instructions without being a scam. Do not let
+    # the generic URL penalty alone classify it as suspicious.
+    if legitimate_service_link:
+
+        strong_service_risks = (
+            urgency_matches
+            or threat_matches
+            or sensitive_found
+            or money_found
+            or unknown_sender_matches
+        )
+
+        if not strong_service_risks:
             score = 0
 
     # -----------------------------------------
@@ -712,6 +819,10 @@ def analyze_message(text):
 
         category = "Legitimate Transaction Alert"
 
+    elif legitimate_service_link and score < 40:
+
+        category = "Likely Legitimate Service Link"
+
     elif detected_categories:
 
         category = detected_categories[0]
@@ -747,6 +858,16 @@ def analyze_message(text):
             "No major scam indicators were detected. "
             "For disputes or unexpected transactions, contact your "
             "bank through its official channels."
+        )
+
+    elif legitimate_service_link and score < 40:
+
+        recommendation = (
+            "This appears to be a service or consultation access link. "
+            "If you were expecting it, use the provider's trusted "
+            "communication to confirm it before granting camera access. "
+            "If it was unexpected, verify with the hospital or service "
+            "provider first."
         )
 
     elif score >= 70:
