@@ -445,6 +445,264 @@ textarea {
     color: #a5b4fc;
 }
 
+
+/* ============================================================
+   RESPONSIVE MOBILE LAYOUT
+   Desktop design above remains unchanged.
+   ============================================================ */
+
+@media (max-width: 768px) {
+
+    /* Main page spacing */
+    .block-container {
+        max-width: 100%;
+        padding-top: 0.9rem !important;
+        padding-left: 0.8rem !important;
+        padding-right: 0.8rem !important;
+        padding-bottom: 1.8rem !important;
+    }
+
+    /* Hero - same design, compact dimensions */
+    .hero {
+        padding: 24px 20px !important;
+        border-radius: 22px !important;
+        margin-bottom: 16px !important;
+    }
+
+    .hero-badge {
+        padding: 5px 10px !important;
+        font-size: 10px !important;
+        margin-bottom: 9px !important;
+        letter-spacing: 0.7px !important;
+    }
+
+    .hero h1 {
+        font-size: 36px !important;
+        line-height: 1.05 !important;
+        letter-spacing: -1.2px !important;
+    }
+
+    .hero-subtitle {
+        font-size: 16px !important;
+        line-height: 1.35 !important;
+        margin-top: 8px !important;
+    }
+
+    .hero-description {
+        font-size: 13px !important;
+        line-height: 1.45 !important;
+        margin-top: 7px !important;
+    }
+
+    /* Feature cards */
+    .feature-card {
+        min-height: auto !important;
+        padding: 16px !important;
+        border-radius: 17px !important;
+        margin-bottom: 8px !important;
+    }
+
+    .feature-icon {
+        font-size: 27px !important;
+        margin-bottom: 6px !important;
+    }
+
+    .feature-title {
+        font-size: 16px !important;
+        margin-bottom: 5px !important;
+    }
+
+    .feature-text {
+        font-size: 12px !important;
+        line-height: 1.45 !important;
+    }
+
+    /* Headings and descriptions */
+    .section-heading {
+        font-size: 22px !important;
+        line-height: 1.2 !important;
+        margin-top: 9px !important;
+        margin-bottom: 4px !important;
+    }
+
+    .section-description {
+        font-size: 13px !important;
+        line-height: 1.4 !important;
+        margin-bottom: 10px !important;
+    }
+
+    .compact-heading {
+        font-size: 18px !important;
+        margin-top: 7px !important;
+        margin-bottom: 8px !important;
+    }
+
+    /* Streamlit vertical gaps */
+    [data-testid="stVerticalBlock"] {
+        gap: 0.45rem;
+    }
+
+    /* Text areas */
+    textarea {
+        font-size: 14px !important;
+        line-height: 1.4 !important;
+    }
+
+    /* Keep buttons full-width and compact */
+    .stButton > button {
+        width: 100% !important;
+        min-height: 42px !important;
+        padding: 8px 12px !important;
+        font-size: 13px !important;
+        border-radius: 10px !important;
+    }
+
+    /* Metrics */
+    [data-testid="stMetric"] {
+        padding: 10px !important;
+        border-radius: 14px !important;
+    }
+
+    [data-testid="stMetricLabel"] {
+        font-size: 10px !important;
+    }
+
+    [data-testid="stMetricValue"] {
+        font-size: 18px !important;
+    }
+
+    /* Risk / ML cards */
+    .risk-card {
+        padding: 13px !important;
+        border-radius: 15px !important;
+        margin-top: 10px !important;
+        margin-bottom: 10px !important;
+    }
+
+    .risk-title {
+        font-size: 15px !important;
+        margin-bottom: 6px !important;
+    }
+
+    .ml-card {
+        padding: 14px !important;
+        border-radius: 15px !important;
+        margin-top: 9px !important;
+        margin-bottom: 10px !important;
+    }
+
+    .ml-title {
+        font-size: 16px !important;
+        margin-bottom: 6px !important;
+    }
+
+    .ml-text {
+        font-size: 13px !important;
+        line-height: 1.45 !important;
+    }
+
+    .explanation-card {
+        padding: 10px 12px !important;
+        margin: 5px 0 !important;
+        border-radius: 11px !important;
+        font-size: 12px !important;
+        line-height: 1.4 !important;
+    }
+
+    /* Screenshot preview */
+    .screenshot-preview {
+        margin: 6px 0 10px 0 !important;
+    }
+
+    .screenshot-preview img {
+        max-width: 100% !important;
+        max-height: 420px !important;
+        border-radius: 12px !important;
+    }
+
+    /* Uploaded image itself */
+    [data-testid="stImage"] img {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+
+    /* Safety cards */
+    .safety-card {
+        min-height: auto !important;
+        padding: 15px !important;
+        border-radius: 16px !important;
+        margin-bottom: 8px !important;
+    }
+
+    .safety-icon {
+        font-size: 25px !important;
+        margin-bottom: 6px !important;
+    }
+
+    .safety-title {
+        font-size: 15px !important;
+        margin-bottom: 5px !important;
+    }
+
+    .safety-text {
+        font-size: 12px !important;
+        line-height: 1.45 !important;
+    }
+
+    /* Reduce divider spacing */
+    hr {
+        margin: 0.7rem 0 !important;
+    }
+
+    /* Footer */
+    .footer {
+        padding: 20px 10px !important;
+    }
+
+    .footer-title {
+        font-size: 17px !important;
+    }
+
+    .footer p {
+        font-size: 11px !important;
+        line-height: 1.4 !important;
+        margin: 4px 0 !important;
+    }
+}
+
+/* Extra-small phones */
+@media (max-width: 400px) {
+
+    .block-container {
+        padding-left: 0.6rem !important;
+        padding-right: 0.6rem !important;
+    }
+
+    .hero {
+        padding: 20px 16px !important;
+    }
+
+    .hero h1 {
+        font-size: 32px !important;
+    }
+
+    .hero-subtitle {
+        font-size: 15px !important;
+    }
+
+    .feature-card {
+        padding: 14px !important;
+    }
+
+    .feature-text {
+        font-size: 11.5px !important;
+    }
+
+    [data-testid="stMetricValue"] {
+        font-size: 16px !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
